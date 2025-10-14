@@ -27,9 +27,10 @@ public class CountryController {
         return service.create(countryEntity);
     }
 
-    @PutMapping
-    public Mono<CountryEntity> updateCountry(@RequestBody CountryEntity countryEntity){
-        return service.create(countryEntity);
+    @PutMapping("{id}")
+    public Mono<CountryEntity> updateCountry(@PathVariable("id") int id,
+                                             @RequestBody CountryEntity countryEntity){
+        return service.update(id, countryEntity);
     }
 
     @DeleteMapping("{id}")
