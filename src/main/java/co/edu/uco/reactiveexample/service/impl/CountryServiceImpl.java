@@ -21,26 +21,27 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Mono<CountryEntity> create(CountryEntity country) {
-        return repository.save(country).then(repository.findByName(country.getName())).doOnNext(publisher::sendCreatedEvent);
+        return repository.save(country).then(repository.findByName(country.getName()))
+                .doOnNext(publisher::sendCreatedEvent);
     }
 
     @Override
-    public Mono<CountryEntity> update(int id, CountryEntity country) {
-        return repository.findById(id)
-                .flatMap(existing -> {
+    public Mono<CountryEntity> update(final int id, final CountryEntity country) {
+        return repository.findById(id).flatMap(existing -> {
                     existing.setName(country.getName());
                     existing.setCountry_code(country.getCountry_code());
                     existing.setIso_country_code(country.getIso_country_code());
                     existing.setEnabled(country.isEnabled());
-                    return repository.save(existing);
+                    return repository.save(existing).doOnNext(publisher::sendUpdatedEvent);
                 });
     }
 
     @Override
-    public Mono<CountryEntity> delete(int id) {
+    public Mono<CountryEntity> delete(final int id) {
         return repository.findById(id)
                 .flatMap(existing ->
                         repository.delete(existing)
+                                .doOnSuccess(event -> publisher.sendDeletedEvent(existing))
                                 .then(Mono.just(existing))
                 );
     }
