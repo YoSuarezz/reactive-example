@@ -23,6 +23,12 @@ public class CountryController {
         this.publisher = publisher;
     }
 
+    @GetMapping("dummy")
+    public Mono<CountryEntity> getDummyCountry(){
+        CountryEntity country = new CountryEntity();
+        return Mono.just(country);
+    }
+
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<CountryEvent> publishEvents() {
         return publisher.getStream();
