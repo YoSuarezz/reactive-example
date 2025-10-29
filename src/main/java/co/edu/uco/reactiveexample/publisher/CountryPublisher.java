@@ -9,7 +9,7 @@ import reactor.core.publisher.Sinks;
 @Component
 public class CountryPublisher {
 
-    private final Sinks.Many<CountryEvent> sink = Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<CountryEvent> sink = Sinks.many().replay().limit(1);
 
     public void sendCreatedEvent(final CountryEntity countryEntity) {
         sink.tryEmitNext(new CountryEvent(countryEntity, CountryEvent.EventType.CREATE));
